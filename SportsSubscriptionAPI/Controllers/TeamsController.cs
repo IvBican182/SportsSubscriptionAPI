@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsSubscriptionAPI.Data;
+using SportsSubscriptionAPI.Models.Team;
 
 namespace SportsSubscriptionAPI.Controllers
 {
@@ -14,10 +16,12 @@ namespace SportsSubscriptionAPI.Controllers
     public class TeamsController : ControllerBase
     {
         private readonly SportsSubscriptionDbContext _context;
+        private readonly IMapper _mapper;
 
-        public TeamsController(SportsSubscriptionDbContext context)
+        public TeamsController(SportsSubscriptionDbContext context, IMapper mapper)
         {
             _context = context;
+            this._mapper = mapper;
         }
 
         // GET: api/Teams
@@ -76,8 +80,10 @@ namespace SportsSubscriptionAPI.Controllers
         // POST: api/Teams
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Team>> PostTeam(Team team)
+        public async Task<ActionResult<Team>> PostTeam(CreateTeamDto createTeamDto)
         {
+            var team = _mapper.Map<Team>(createTeamDto);
+
             _context.Teams.Add(team);
             await _context.SaveChangesAsync();
 
